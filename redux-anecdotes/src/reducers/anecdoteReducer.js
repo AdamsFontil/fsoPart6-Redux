@@ -1,3 +1,6 @@
+import { createSlice } from '@reduxjs/toolkit'
+
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -19,15 +22,35 @@ const asObject = (anecdote) => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
-const reducer = (state = initialState, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
-  switch(action.type) {
-    case 'NEW_ANECDOTE':
-      return [...state, action.payload]
-    case 'VOTE':
+
+const anecdoteSlice = createSlice({
+  name: 'anecdotes',
+  initialState,
+  reducers: {
+    // createAnecdote(state, action) {
+    //   const content = action.payload
+    //   state.push({
+    //   content,
+    //   votes: 0,
+    //   id: getId()
+    //   })
+    //   state.push(anecdote);
+    //   state.notification = 'New anecdote created!';
+
+
+    // },
+    createAnecdote: (state, action) => {
+      const anecdote = {
+        content: action.payload,
+        id: getId(),
+        votes: 0
+      };
+      console.log(initialState)
+      state.push(anecdote);
+    },
+    increaseVote(state, action) {
       console.log('castingVote')
-      const id = action.payload.id
+      const id = action.payload
       const anecdoteToChange = state.find(n => n.id === id)
       console.log('target',anecdoteToChange)
       const changedAnecdote = {
@@ -38,32 +61,12 @@ const reducer = (state = initialState, action) => {
       return state.map(anecdote =>
         anecdote.id !== id ? anecdote : changedAnecdote
       )
-    default:
-      return state
-  }
-
-
-}
-
-
-export const createAnecdote = (content) => {
-  return {
-    type: 'NEW_ANECDOTE',
-    payload: {
-      content,
-      votes: 0,
-      id: getId()
     }
-  }
-}
-
-export const increaseVote = (id) => {
-  return {
-    type: 'VOTE',
-    payload: { id }
-  }
-}
+  },
 
 
+})
 
-export default reducer
+
+export const { createAnecdote, increaseVote } = anecdoteSlice.actions
+export default anecdoteSlice.reducer
